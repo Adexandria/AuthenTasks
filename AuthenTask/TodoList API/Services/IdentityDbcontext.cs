@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TodoList_API.Entity;
 using TodoList_API.Login_Entity;
 
 namespace TodoList_API.Services
@@ -19,5 +20,6 @@ namespace TodoList_API.Services
         {
             base.OnModelCreating(builder);
         }
+        public DbSet<TodoList> TodoLists { get; set; }
     }
 }

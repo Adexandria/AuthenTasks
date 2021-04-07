@@ -8,13 +8,13 @@ namespace TodoList_API.Services
 {
     public interface ILists
     {
-        IEnumerable<TodoList> GetTodo { get; }
+        IEnumerable<TodoList> GetTodo(string id);
         Task<TodoList> GetTodoById(Guid id);
-        Task<TodoList> Add(TodoList list);
+        Task<TodoList> Add(TodoList list,string username);
         Task<TodoList> SearchByName(string name);
-        Task<TodoList> SearchByDate(string date);
+        IEnumerable<TodoList> SearchByDate(string date);
         Task<int> Delete(Guid id);
         Task<int> Saves();
-        TodoList Update(TodoList list);
+        Task<TodoList> Update(TodoList list,Guid id);
     }
 }

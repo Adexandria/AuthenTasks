@@ -11,7 +11,8 @@ namespace TodoList_API.ViewModel
         [Required(ErrorMessage ="Enter Task")]
         public string Name { get; set; }
         public string LongNote { get; set; }
-        public DateTimeOffset DueDate { get; set; }
+        
+        public string DueDate { get; set; }
         public string TasksUpdate { get; set; }
     }
 }

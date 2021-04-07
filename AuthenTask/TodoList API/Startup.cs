@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -33,15 +35,12 @@ namespace TodoList_API
             services.AddControllers();
             services.AddDbContext<IdentityDbcontext>(opts =>
             {
-                opts.UseSqlServer(Configuration.GetConnectionString("Lists"));
+                opts.UseSqlServer(Configuration.GetConnectionString("Lists")).EnableSensitiveDataLogging();
             });
-            services.AddDbContext<ListDbContext>(opts =>
-            {
-                opts.UseSqlServer(Configuration.GetConnectionString("TodoTasks"));
-            });
+            services.AddAuthentication();
             services.AddIdentity<SignUp, IdentityRole>().AddEntityFrameworkStores<IdentityDbcontext>().AddDefaultTokenProviders();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-           
+            services.AddScoped<ILists, ListsRepository>();
             services.Configure<IdentityOptions>(options =>
             {
                 // Default Password settings.
@@ -51,6 +50,22 @@ namespace TodoList_API
                 options.Password.RequireUppercase = true;
                 options.Password.RequiredLength = 4;
                 options.Password.RequiredUniqueChars = 1;
+                options.User.RequireUniqueEmail = true;
+               
+            });
+            services.Configure<SecurityStampValidatorOptions>(options =>
+            {
+                // enables immediate logout, after updating the user's stat.
+                options.ValidationInterval = TimeSpan.Zero;
+            });
+            services.ConfigureApplicationCookie(options =>
+            {
+                // Cookie settings
+                options.Cookie.HttpOnly = true;
+
+                options.LoginPath = PathString.Empty;
+                options.AccessDeniedPath = PathString.Empty;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
             });
         }
 
@@ -61,10 +76,12 @@ namespace TodoList_API
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            app.UseHttpsRedirection();
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
+            
 
             app.UseEndpoints(endpoints =>
             {

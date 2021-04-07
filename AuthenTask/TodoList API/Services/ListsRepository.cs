@@ -1,35 +1,36 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TodoList_API.Entity;
+using TodoList_API.Login_Entity;
 
 namespace TodoList_API.Services
 {
     public class ListsRepository : ILists
     {
-        private readonly ListDbContext db;
-        public ListsRepository(ListDbContext db)
+        private readonly IdentityDbcontext db;
+        private readonly UserManager<SignUp> sign;
+        public ListsRepository(IdentityDbcontext db,UserManager<SignUp> sign)
         {
             this.db = db;
+            this.sign = sign;
         }
-        public IEnumerable<TodoList> GetTodo 
+        public IEnumerable<TodoList> GetTodo (string id)
         {
-            get
-            {
-                return db.TodoLists;
-            }
+            return db.TodoLists.Where(s => s.OwnerId == id).AsNoTracking().OrderBy(s=>s.Id);
         }
 
-
-
-        public async Task<TodoList> Add(TodoList list)
+        public async Task<TodoList> Add(TodoList list,string username)
         {
             if(list == null)
             {
                 throw new NullReferenceException(nameof(list));
             }
+            var user = sign.FindByNameAsync(username).Result;
+            list.OwnerId = user.Id;
             list.Id = new Guid();
             await db.TodoLists.AddAsync(list);
             return list;
@@ -37,10 +38,6 @@ namespace TodoList_API.Services
 
         public async Task<int> Delete(Guid id)
         {
-            if (id == null)
-            {
-                throw new NullReferenceException(nameof(id));
-            }
             var query = await GetTodoById(id);
             if(query == null)
             {
@@ -56,7 +53,7 @@ namespace TodoList_API.Services
             {
                 throw new NullReferenceException(nameof(id));
             }
-            return await db.TodoLists.Where(r => r.Id == id).FirstOrDefaultAsync();
+            return await db.TodoLists.Where(r => r.Id == id).AsNoTracking().FirstOrDefaultAsync();
         }
 
         public async Task<int> Saves()
@@ -64,21 +61,23 @@ namespace TodoList_API.Services
             return await db.SaveChangesAsync();
         }
 
-        public async Task<TodoList> SearchByDate(string date)
+        public IEnumerable<TodoList> SearchByDate(string date)
         {
-            return await db.TodoLists.Where(r => r.DueDate.ToString() == date).FirstOrDefaultAsync();
+            return  db.TodoLists.Where(r => r.DueDate.ToString() == date).AsNoTracking();
         }
 
         public async Task<TodoList> SearchByName(string name)
         {
-            return await db.TodoLists.Where(r => r.Name == name).FirstOrDefaultAsync();
+            return await db.TodoLists.Where(r => r.Name == name).AsNoTracking().FirstOrDefaultAsync();
         }
 
-        public TodoList Update(TodoList list)
+        public async Task<TodoList> Update(TodoList list,Guid id)
         {
-            var query = db.TodoLists.Attach(list);
-            query.State = EntityState.Modified;
-            return list;
+            var query = await GetTodoById(id);
+            list.OwnerId = query.OwnerId;
+            db.Entry(query).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
+            db.Entry(list).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            return await GetTodoById(list.Id);
         }
     }
 }

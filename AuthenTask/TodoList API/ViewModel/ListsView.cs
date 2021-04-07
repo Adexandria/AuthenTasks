@@ -9,7 +9,7 @@ namespace TodoList_API.ViewModel
     {
         public string Name { get; set; }
         public string LongNote { get; set; }
-        public string DueDate { get; set; } = "None";
+        public string DueDate { get; set; } = "0-00-0000 00:00:00";
         public string TasksUpdate { get; set; } = "Uncompleted";
     }
 }

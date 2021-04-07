@@ -11,9 +11,9 @@ namespace TodoList_API.ViewModel
   
     public class LoginModel
     {
-        [Required(ErrorMessage = "Enter User Name")]
+        [Required(ErrorMessage = "Enter UserName")]
         public string Username { get; set; }
-       [Required(ErrorMessage = "Enter Password Name")]
+        [Required(ErrorMessage = "Enter Password Name")]
         public string Password { get; set; }
     }
 }

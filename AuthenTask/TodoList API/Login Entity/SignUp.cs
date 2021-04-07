@@ -15,6 +15,7 @@ namespace TodoList_API.Login_Entity
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public override string UserName { get => base.UserName; set => base.UserName = value; }
+        public override string Email { get => base.Email; set => base.Email = value; }
         public string Password { get; set; }
         
     }
