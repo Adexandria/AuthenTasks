@@ -39,7 +39,7 @@ namespace TodoList_API.Controllers
             return Ok(newTasks);
         }
         [HttpGet("{id}")]
-        public async Task<ActionResult<ListsView>> GetTasksById(Guid id)
+        public async Task<ActionResult<ListView>> GetTasksById(Guid id)
         {
             var list = await lists.GetTodoById(id);
             if (list == null)
