@@ -20,14 +20,21 @@ namespace TodoList_API.Profiles
             CreateMap<ListUpdate, TodoList>()
               .ForMember(s => s.Name, opt => opt.MapFrom(dest => dest.Name))
               .ForMember(s => s.LongNote, opt => opt.MapFrom(dest => dest.LongNote))
-              .ForMember(s => s.DueDate, opt => opt.MapFrom(dest => dest.DueDate))
+              .ForMember(s => s.DueDate, opt => opt.MapFrom(dest =>dest.DueDate))
               .ForMember(s => s.TasksUpdate, opt => opt.MapFrom(dest => dest.TasksUpdate));
 
             CreateMap<TodoList,ListsView>()
+                .ForMember(s => s.Id, opt => opt.MapFrom(dest => dest.Id))
                .ForMember(s => s.Name, opt => opt.MapFrom(dest => dest.Name))
                .ForMember(s => s.LongNote, opt => opt.MapFrom(dest => dest.LongNote))
-               .ForMember(s => s.DueDate, opt => opt.MapFrom(dest => dest.DueDate.ToString()))
+               .ForMember(s => s.DueDate, opt => opt.MapFrom(dest => dest.DueDate))
                .ForMember(s => s.TasksUpdate, opt => opt.MapFrom(dest => dest.TasksUpdate.ToString()));
+           
+            CreateMap<TodoList, ListView>()
+             .ForMember(s => s.Name, opt => opt.MapFrom(dest => dest.Name))
+             .ForMember(s => s.LongNote, opt => opt.MapFrom(dest => dest.LongNote))
+             .ForMember(s => s.DueDate, opt => opt.MapFrom(dest => dest.DueDate))
+             .ForMember(s => s.TasksUpdate, opt => opt.MapFrom(dest => dest.TasksUpdate.ToString()));
 
         }
     }
