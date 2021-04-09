@@ -15,7 +15,7 @@ namespace TodoList_API.Entity
         public string OwnerId { get; set; }
         public string Name { get; set; }
         public string LongNote { get; set; } 
-        public DateTimeOffset DueDate {get; set; }
+        public string DueDate {get; set; }
         public TasksUpdate TasksUpdate { get; set; } 
     }
 }
