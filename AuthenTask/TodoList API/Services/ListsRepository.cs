@@ -75,8 +75,9 @@ namespace TodoList_API.Services
         {
             var query = await GetTodoById(id);
             list.OwnerId = query.OwnerId;
-            db.Entry(query).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
-            db.Entry(list).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            db.Entry(query).State =EntityState.Detached;
+            db.Entry(list).State = EntityState.Modified;
+            await db.SaveChangesAsync();
             return await GetTodoById(list.Id);
         }
     }
