@@ -46,7 +46,7 @@ namespace TodoList_API.Controllers
             {
                 return NotFound("The task was not found");
             }
-            var newlist = mapper.Map<ListsView>(list);
+            var newlist = mapper.Map<ListView>(list);
             return Ok(newlist);
         }
        /* [HttpGet("{date}")]
